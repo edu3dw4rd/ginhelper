@@ -1,6 +1,9 @@
 package response
 
 import (
+	"math"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,8 +29,8 @@ type modelResponse struct {
 }
 
 type ModelPaginationResponse struct {
-	Meta interface{} `json:"meta"`
-	Data interface{} `json:"data"`
+	Meta paginationMeta `json:"meta"`
+	Data interface{}    `json:"data"`
 }
 
 func isSuccessCode(statusCode int) bool {
@@ -47,4 +50,35 @@ func NewResponse(ctx *gin.Context, statusCode int, msg string, content interface
 	}
 
 	ctx.JSON(statusCode, respData)
+}
+
+func PaginationResponse(code, total int, page, perPage string, data interface{}) *ModelPaginationResponse {
+	res := new(ModelPaginationResponse)
+	convPage, _ := strconv.Atoi(page)
+	convPerPage, _ := strconv.Atoi(perPage)
+	page_count := int(math.Ceil(float64(total) / float64(convPerPage)))
+	hasNext := false
+
+	if float64(convPage) < float64(page_count) {
+		hasNext = true
+	}
+
+	meta := paginationMeta{
+		metaResponse{
+			Message: "success",
+			Code:    code,
+			Status:  true,
+		},
+		CurrentPage: convPage,
+		NextPage:    hasNext,
+		PrevPage:    convPage > 1,
+		PerPage:     convPerPage,
+		PageCount:   page_count,
+		TotalCount:  total,
+	}
+
+	res.Meta = meta
+	res.Data = data
+
+	return res
 }
