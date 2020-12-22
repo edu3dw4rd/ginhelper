@@ -64,7 +64,7 @@ func PaginationResponse(code, total int, page, perPage string, data interface{})
 	}
 
 	meta := paginationMeta{
-		metaResponse{
+		metaResponse: metaResponse{
 			Message: "success",
 			Code:    code,
 			Status:  true,
