@@ -52,7 +52,7 @@ func NewResponse(ctx *gin.Context, statusCode int, msg string, content interface
 	ctx.JSON(statusCode, respData)
 }
 
-func PaginationResponse(code, total int, page, perPage string, data interface{}) *ModelPaginationResponse {
+func PaginationResponse(code, total int, page, perPage string, data interface{}) {
 	res := new(ModelPaginationResponse)
 	convPage, _ := strconv.Atoi(page)
 	convPerPage, _ := strconv.Atoi(perPage)
@@ -80,5 +80,5 @@ func PaginationResponse(code, total int, page, perPage string, data interface{})
 	res.Meta = meta
 	res.Data = data
 
-	return res
+	ctx.JSON(code, res)
 }
